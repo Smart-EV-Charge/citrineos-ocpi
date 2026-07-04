@@ -1,5 +1,8 @@
 FROM --platform=$BUILDPLATFORM node:22 AS build
 
+ARG NPM_CONFIG_REGISTRY=https://registry.npmjs.org/
+ENV NPM_CONFIG_REGISTRY=${NPM_CONFIG_REGISTRY}
+
 WORKDIR /usr/local/apps
 
 # copy and pack citrineos core
