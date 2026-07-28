@@ -52,6 +52,7 @@ import { GET_CHARGING_STATION_BY_ID_QUERY } from '../graphql/queries/chargingSta
 import { LocationReferences } from '../model/LocationReferences';
 import { UID_FORMAT } from '../model/DTO/EvseDTO';
 import { OcpiResponseStatusCode } from '../model/OcpiResponse';
+import { assertEmspLegacyTokenWriteAllowed } from '../util/emsp-write-fence';
 
 @Service()
 export class TokensService {
@@ -94,6 +95,7 @@ export class TokensService {
     tenantId: number,
     tenantPartnerId: number,
   ): Promise<TokenDTO> {
+    assertEmspLegacyTokenWriteAllowed();
     const authorization =
       TokensMapper.mapOcpiTokenToPartialOcppAuthorization(token);
 
@@ -168,6 +170,7 @@ export class TokensService {
     tenantId: number,
     tenantPartnerId: number,
   ): Promise<TokenDTO> {
+    assertEmspLegacyTokenWriteAllowed();
     if (!token.last_updated)
       throw new MissingParamException(
         `Tokens PATCH must contain last_updated.`,
