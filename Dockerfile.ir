@@ -23,10 +23,15 @@ RUN npm config set registry "$NPM_REGISTRY" && \
 COPY . .
 COPY ./Server/tsconfig.docker.json /usr/local/apps/citrineos-ocpi/Server/tsconfig.json
 
-# This OCPI release is coupled to the exact CitrineOS 1.8.0 interfaces in
-# package-lock.json. A loose `npm install` resolves ~1.8.0 to newer, breaking
-# interface-compatible releases, so keep the deployment build reproducible.
-RUN npm ci
+# The upstream .dockerignore excludes package-lock.json, while this OCPI
+# release requires the CitrineOS 1.8.0 interfaces. Install normally, then pin
+# the coupled CitrineOS packages inside the image before compiling.
+RUN npm run install-all && \
+  npm install --no-save --legacy-peer-deps \
+    @citrineos/base@1.8.0 \
+    @citrineos/data@1.8.0 \
+    @citrineos/util@1.8.0 && \
+  node -e "['base','data','util'].forEach((p) => { const v = require('@citrineos/' + p + '/package.json').version; if (v !== '1.8.0') throw new Error('@citrineos/' + p + ' resolved to ' + v); })"
 RUN npm run build
 
 FROM ${NODE_IMAGE} AS runtime
