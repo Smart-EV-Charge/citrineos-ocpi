@@ -24,21 +24,20 @@ COPY . .
 COPY ./Server/tsconfig.docker.json /usr/local/apps/citrineos-ocpi/Server/tsconfig.json
 
 # The upstream .dockerignore excludes package-lock.json, while this OCPI
-# release requires the CitrineOS 1.8.0 interfaces. Install normally, then pin
-# the coupled CitrineOS packages inside the image before compiling.
-RUN npm run install-all && \
-  npm install --no-save --legacy-peer-deps \
+# release requires the CitrineOS 1.8.0 interfaces. Keep the bulk install in a
+# separate cacheable layer, then pin the coupled packages inside the image.
+RUN npm run install-all
+RUN npm install --no-save --legacy-peer-deps \
     @citrineos/base@1.8.0 \
     @citrineos/data@1.8.0 \
-    @citrineos/util@1.8.0 && \
+    @citrineos/util@1.8.0 \
+    graphql@16.11.0 && \
   node -e "['base','data','util'].forEach((p) => { const v = require('@citrineos/' + p + '/package.json').version; if (v !== '1.8.0') throw new Error('@citrineos/' + p + ' resolved to ' + v); })"
 RUN npm run build
 
-FROM ${NODE_IMAGE} AS runtime
-
-WORKDIR /usr/local/apps/citrineos-ocpi
-
-COPY --from=build /usr/local/apps/citrineos-ocpi /usr/local/apps/citrineos-ocpi
+# The build tree already contains the runtime workspace. Reusing it avoids
+# duplicating several gigabytes into another image layer.
+FROM build AS runtime
 
 EXPOSE 8085
 
