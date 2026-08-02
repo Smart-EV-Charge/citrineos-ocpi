@@ -68,6 +68,9 @@ export { ImageCategory } from './model/ImageCategory';
 export { ImageType } from './model/ImageType';
 export { CountryCode } from './util/Util';
 export { KoaServer } from './util/KoaServer';
+export { AdapterEventsController } from './controllers/AdapterEventsController';
+export { AdapterHttpEventSubscriber } from './events/adapterHttp/subscriber';
+export { OCPI_DTO_CHANNELS } from './controllers/AdapterEventsController';
 export { InterfaceRole } from './model/InterfaceRole';
 export { AlreadyRegisteredException } from './exception/AlreadyRegisteredException';
 export { NotRegisteredException } from './exception/NotRegisteredException';
@@ -324,6 +327,7 @@ export * from './events';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import { HealthController } from './util/KoaServerHealthController';
+import { AdapterEventsController } from './controllers/AdapterEventsController';
 
 useContainer(Container);
 
@@ -382,7 +386,7 @@ export class OcpiServer extends KoaServer {
         (module as OcpiModule).getController(),
       );
       const options: RoutingControllersOptions = {
-        controllers: [...controllers, HealthController],
+        controllers: [...controllers, HealthController, AdapterEventsController],
         routePrefix: '/ocpi',
         middlewares: [],
         defaultErrorHandler: false,

@@ -41,11 +41,13 @@ services:
     environment:
       APP_NAME: 'all'
       APP_ENV: 'docker'
-      DB_HOST: 'ocpp-db'
       AMQP_URL: 'amqp://guest:guest@amqp-broker:5672'
       AMQP_EXCHANGE: 'citrineos'
       # EMSP-0009 — eMSP owns token writes; rollback: unset or LEGACY
       EMSP_WRITE_ROUTING: 'TARGET'
+      # ADAPTER-0007 — adapter → OCPI domain-event ingest
+      ADAPTER_OCPI_INGEST_TOKEN: 'replace-with-a-generated-32-plus-character-secret'
+      OCPI_DTO_SUBSCRIBER: 'adapter'
     # depends_on:
     #   ocpp-db:
     #     condition: service_healthy

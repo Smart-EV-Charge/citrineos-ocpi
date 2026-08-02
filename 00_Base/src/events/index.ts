@@ -24,4 +24,4 @@ export { AbstractDtoModule } from './module';
 export { AbstractDtoEventReceiver, AbstractDtoEventSender } from './handlers';
 export { RabbitMqDtoReceiver } from './rabbitMQ/receiver';
 export { RabbitMqDtoSender } from './rabbitMQ/sender';
-export { PgNotifyEventSubscriber } from './pgNotify/subscriber';
+export { AdapterHttpEventSubscriber } from './adapterHttp/subscriber';
