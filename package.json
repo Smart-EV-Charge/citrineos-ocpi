@@ -24,10 +24,10 @@
   "scripts": {
     "test": "jest --config jest.config.js",
     "sync-db": "ts-node ./db.sync.ts",
-    "init-db": "npx sequelize-cli db:migrate --debug && echo migration completed successfully",
-    "seed-db": "npx sequelize-cli db:seed:all --debug",
-    "seed-undo": "npx sequelize-cli db:seed:undo:all --debug",
-    "clean-db": "npx sequelize-cli db:seed:undo:all --debug",
+    "init-db": "node -e \"console.error('ADAPTER-0007: OCPI no longer migrates the CitrineOS database. Apply migrations/20260802120000_drop_notification_triggers.sql once with an ops credential.'); process.exit(1)\"",
+    "seed-db": "node -e \"console.error('ADAPTER-0007: OCPI DB seed against citrine is retired'); process.exit(1)\"",
+    "seed-undo": "node -e \"console.error('ADAPTER-0007: OCPI DB seed against citrine is retired'); process.exit(1)\"",
+    "clean-db": "node -e \"console.error('ADAPTER-0007: OCPI DB seed against citrine is retired'); process.exit(1)\"",
     "clean-and-seed-db": "npm run clean-db && npm run seed-db",
     "start-mock-emsp": "npm run build && nodemon ./mock-client/index.ts --config ./mock-client/nodemon.json",
     "start-mockoon": "npm run start-mock-emsp && mockoon-cli start --data http://localhost:8086/docs/spec --port 3000",
@@ -43,14 +43,14 @@
     "clean-dist": "find . -type d -name dist -not -path '*/node_modules/*' -exec rm -rf {} +",
     "clean": "npm run clean-dist && npm run clean-tsbuildinfo",
     "build": "tsc --build --verbose",
-    "postbuild": "npm run copy-assets --prefix ./Server && npm run migrate:build",
+    "postbuild": "npm run copy-assets --prefix ./Server",
     "lint": "npx eslint ./",
     "lint-fix": "npm run prettier && npx eslint --fix ./",
     "prettier": "prettier --write .",
     "fi": "npm run fresh && npm run install-all",
     "generate": "graphql-codegen",
     "migrate:build": "tsc --project migrations/tsconfig.json",
-    "migrate": "npm run migrate:build && npx sequelize-cli db:migrate && echo migration completed successfully"
+    "migrate": "node -e \"console.error('ADAPTER-0007: use migrations/20260802120000_drop_notification_triggers.sql as a one-shot ops step; sequelize bridge removed'); process.exit(1)\""
   },
   "workspaces": [
     "./00_Base",

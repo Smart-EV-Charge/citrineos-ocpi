@@ -86,14 +86,16 @@ export const ocpiConfigInputSchema = z.object({
       .optional(),
   }),
 
-  // Database configuration (required for OCPI data persistence)
-  database: z.object({
-    host: z.string().default('localhost').optional(),
-    port: z.number().int().positive().default(5432).optional(),
-    database: z.string().default('ocpi').optional(),
-    username: z.string().default('ocpi').optional(),
-    password: z.string().default('').optional(),
-  }),
+  // ADAPTER-0007 — optional; OCPI no longer connects to CitrineOS Postgres.
+  database: z
+    .object({
+      host: z.string().default('localhost').optional(),
+      port: z.number().int().positive().default(5432).optional(),
+      database: z.string().default('ocpi').optional(),
+      username: z.string().default('ocpi').optional(),
+      password: z.string().default('').optional(),
+    })
+    .optional(),
 
   // Cache configuration (required for OCPI token caching)
   cache: z
@@ -245,13 +247,16 @@ export const ocpiConfigSchema = z.object({
       .optional(),
   }),
 
-  database: z.object({
-    host: z.string(),
-    port: z.number().int().positive(),
-    database: z.string(),
-    username: z.string(),
-    password: z.string(),
-  }),
+  // ADAPTER-0007 — optional; runtime no longer uses CitrineOS Postgres.
+  database: z
+    .object({
+      host: z.string(),
+      port: z.number().int().positive(),
+      database: z.string(),
+      username: z.string(),
+      password: z.string(),
+    })
+    .optional(),
 
   cache: z.object({
     memory: z.boolean().optional(),

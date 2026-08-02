@@ -43,13 +43,7 @@ export function createLocalOcpiConfig(): OcpiConfigInput {
       },
     },
 
-    database: {
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432'),
-      database: process.env.DB_NAME || 'citrine',
-      username: process.env.DB_USER || 'citrine',
-      password: process.env.DB_PASS || 'citrine',
-    },
+    // ADAPTER-0007 — no CitrineOS database credentials (event ingress via adapter HTTP).
 
     cache: {
       memory: true,

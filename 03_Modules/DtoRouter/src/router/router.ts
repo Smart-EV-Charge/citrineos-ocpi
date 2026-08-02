@@ -12,23 +12,24 @@ import {
   IDtoRouter,
   OcpiConfig,
   OcpiConfigToken,
-  PgNotifyEventSubscriber,
+  AdapterHttpEventSubscriber,
   RabbitMqDtoSender,
 } from '@citrineos/ocpi-base';
 import { ILogObj, Logger } from 'tslog';
 import { Inject, Service } from 'typedi';
 
+/** ADAPTER-0007 — ingress is AdapterHttpEventSubscriber only (no Postgres LISTEN). */
 @Service()
 export class DtoRouter implements IDtoRouter {
   protected _config: OcpiConfig;
   protected readonly _sender: RabbitMqDtoSender;
-  protected _subscriber: PgNotifyEventSubscriber;
+  protected _subscriber: AdapterHttpEventSubscriber;
   protected readonly _logger: Logger<ILogObj>;
 
   constructor(
     @Inject(OcpiConfigToken) config: OcpiConfig,
     sender: RabbitMqDtoSender,
-    subscriber: PgNotifyEventSubscriber,
+    subscriber: AdapterHttpEventSubscriber,
     logger?: Logger<ILogObj>,
   ) {
     this._logger = logger
@@ -44,9 +45,6 @@ export class DtoRouter implements IDtoRouter {
     await this._subscriber.init();
   }
 
-  /**
-   * Getters & Setters
-   */
   get subscriber(): IDtoEventSubscriber {
     return this._subscriber;
   }
