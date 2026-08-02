@@ -44,6 +44,8 @@ services:
       DB_HOST: 'ocpp-db'
       AMQP_URL: 'amqp://guest:guest@amqp-broker:5672'
       AMQP_EXCHANGE: 'citrineos'
+      # EMSP-0009 — eMSP owns token writes; rollback: unset or LEGACY
+      EMSP_WRITE_ROUTING: 'TARGET'
     # depends_on:
     #   ocpp-db:
     #     condition: service_healthy
