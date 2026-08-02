@@ -1,6 +1,7 @@
 /**
- * EMSP-0006 — fence OCPI → Core/Hasura token mutations when eMSP owns token writes.
- * Default LEGACY (allow). Never commit TARGET in shared env templates.
+ * EMSP-0006/0009 — fence OCPI → Core/Hasura token mutations when eMSP owns token writes.
+ * In-code default LEGACY (allow) for rollback. Deploy compose sets EMSP_WRITE_ROUTING=TARGET
+ * (EMSP-0009); revert by unsetting or setting LEGACY.
  */
 export function assertEmspLegacyTokenWriteAllowed(env: NodeJS.ProcessEnv = process.env): void {
   const routing = (env.EMSP_WRITE_ROUTING ?? 'LEGACY').toUpperCase();
