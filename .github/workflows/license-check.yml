@@ -9,14 +9,14 @@ on:
 
 jobs:
   reuse-check:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, x64, evjex]
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: '3.x'
 
@@ -71,4 +71,3 @@ jobs:
         if: always()
         run: |
           rm -f reuse_output.txt failing_files.txt unignored_failures.txt
-

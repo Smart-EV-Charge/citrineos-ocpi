@@ -11,7 +11,7 @@ concurrency:
 jobs:
   linter:
     name: Linter
-    runs-on: ubuntu-22.04
+    runs-on: [self-hosted, linux, x64, evjex]
     strategy:
       matrix:
         node-version: [18]
