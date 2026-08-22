@@ -1,10 +1,11 @@
-# Dockerfile.ir - Air-gapped server build.
-# Uses Samasha Gitea for Docker images and EVyar Verdaccio for npm packages.
+# Dockerfile.ir - EV-YAR development deployment build.
+# Uses the EV-YAR Gitea registry for Docker images and the internal Verdaccio
+# mirror for npm packages. Application source remains unchanged.
 #
 # Usage:
 #   docker build -f Dockerfile.ir -t citrineos-ocpi .
 
-ARG NODE_IMAGE=git.samasha.ir/evjex/node:22-alpine
+ARG NODE_IMAGE=git.ev-yar.ir/evyar/node:22-alpine
 ARG NPM_REGISTRY=http://89.42.199.156:4873/
 
 FROM ${NODE_IMAGE} AS build
@@ -15,20 +16,28 @@ ENV NPM_CONFIG_REGISTRY=${NPM_REGISTRY}
 WORKDIR /usr/local/apps/citrineos-ocpi
 
 RUN npm config set registry "$NPM_REGISTRY" && \
+  npm config set replace-registry-host always && \
   npm config set audit false && \
   npm config set fund false
 
 COPY . .
 COPY ./Server/tsconfig.docker.json /usr/local/apps/citrineos-ocpi/Server/tsconfig.json
 
+# The upstream .dockerignore excludes package-lock.json, while this OCPI
+# release requires the CitrineOS 1.8.0 interfaces. Keep the bulk install in a
+# separate cacheable layer, then pin the coupled packages inside the image.
 RUN npm run install-all
+RUN npm install --no-save --legacy-peer-deps \
+    @citrineos/base@1.8.0 \
+    @citrineos/data@1.8.0 \
+    @citrineos/util@1.8.0 \
+    graphql@16.11.0 && \
+  node -e "['base','data','util'].forEach((p) => { const v = require('@citrineos/' + p + '/package.json').version; if (v !== '1.8.0') throw new Error('@citrineos/' + p + ' resolved to ' + v); })"
 RUN npm run build
 
-FROM ${NODE_IMAGE} AS runtime
-
-WORKDIR /usr/local/apps/citrineos-ocpi
-
-COPY --from=build /usr/local/apps/citrineos-ocpi /usr/local/apps/citrineos-ocpi
+# The build tree already contains the runtime workspace. Reusing it avoids
+# duplicating several gigabytes into another image layer.
+FROM build AS runtime
 
 EXPOSE 8085
 

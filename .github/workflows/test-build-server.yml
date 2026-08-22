@@ -5,10 +5,7 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+    runs-on: [self-hosted, linux, x64, evjex]
 
     steps:
       - uses: actions/checkout@v4
